@@ -19,8 +19,7 @@ function getPackagesList {
     if [[ -z "${PACKAGES}" ]]; then
         echo "${PACKAGES}"
     else
-        # TODO: put actual location for packages list
-        echo "$(curl -sSL http://example.org)"
+        echo "$(curl -sSL https://raw.githubusercontent.com/harrywyatt5/InstallLabPrerequisites/refs/heads/main/packages.txt)"
     fi
 }
 
