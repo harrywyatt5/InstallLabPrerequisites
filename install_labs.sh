@@ -5,7 +5,10 @@ set -e
 # ROS2_GPG_KEY can be used to manually set a ros2 GPG key (optional)
 # USE_CORE_COUNT is how many cores to use to operate the compilation (optional)
 # USE_ROS2_BRANCH sets what apt repository branch to use (optional)
-# PACKAGES is a Bash array of packages to get from apt (optional)
+# PACKAGES is a newline-separated list of packages to get from apt (optional)
+# GITHUB_SSH_KEY will use SSH rather than HTTPS to clone Git packages if set, offering that SSH key to GitHub (optional)
+INSTALL_USER="$(logname)"
+SDFORMAT9_BRANCH=''
 
 function getGPGKey {
     if [[ -z "${ROS2_GPG_KEY}" ]]; then
@@ -15,11 +18,46 @@ function getGPGKey {
     fi 
 }
 
+function run_as_install_user {
+    su - "${INSTALL_USER}" -s '/bin/bash' "${1}"
+}
+
 function getPackagesList {
     if [[ -z "${PACKAGES}" ]]; then
-        echo "${PACKAGES}"
-    else
         echo "$(curl -sSL https://raw.githubusercontent.com/harrywyatt5/InstallLabPrerequisites/refs/heads/main/packages.txt)"
+    else
+        echo "${PACKAGES}"
+    fi
+}
+
+function getGitHubPrefix {
+    if [[ -z "${GITHUB_SSH_KEY}" ]]; then
+        echo 'https://github.com/'
+    else
+        echo 'git@github.com:'
+    fi
+}
+
+function getGitHubKeySwitch {
+    if [[ -n "${GITHUB_SSH_KEY}" ]]; then
+        echo "-c \"core.sshCommand=ssh -i ${GITHUB_SSH_KEY}\""
+    fi
+}
+
+function getCoreCount {
+    if [[ -z "${USE_CORE_COUNT}" ]]; then
+        local total_sys_mem_kbs="$(cat /proc/meminfo | grep 'MemTotal' | awk '{ for(i=1; i<NF; i++) { if($i ~ /[0-9]/) print $i }}')"
+        local total_page_mem_kbs="$(cat /proc/meminfo | grep 'SwapTotal' | awk '{ for(i=1; i<NF; i++) { if($i ~ /[0-9]/) print $i }}')"
+        local total_cores="$(($total_sys_mem_kbs + $total_page_mem_kbs) / 2000000)"
+        if [[ "${total_cores}" -eq 0 ]]; then
+            echo 1
+        elif [[ "${total_cores}" -gt "$(nproc)" ]]; then
+            echo "$(nproc)"
+        else
+            echo "${total_cores}"
+        fi
+    else
+        echo "${USE_CORE_COUNT}"
     fi
 }
 
@@ -56,3 +94,8 @@ source /opt/ros/humble/setup.bash
 
 # Install additional packages
 getPackagesList | xargs apt install -y
+
+# Install and build sdformat9
+run_as_install_user 'mkdir /tmp/sdformat9'
+run_as_install_user "git clone $(getGitHubKeySwitch) -b ${SDFORMAT9_BRANCH} $(getGitHubPrefix)gazebosim/sdformat.git /tmp/sdformat9"
+run_as_install_user "mkdir /tmp/sdformat9/build && cd /tmp/sdformat9/build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local && make -j$(getCoreCount)"
