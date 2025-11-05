@@ -4,9 +4,9 @@ set -e
 # -- Parameters ---
 # ROS2_GPG_KEY can be used to manually set a ros2 GPG key (optional)
 # USE_CORE_COUNT is how many cores to use to operate the compilation (optional)
-# USE_ROS2_BRANCH sets what apt repository branch to use (optional)
 # PACKAGES is a newline-separated list of packages to get from apt (optional)
 # GITHUB_SSH_KEY will use SSH rather than HTTPS to clone Git packages if set, offering that SSH key to GitHub (optional)
+USE_ROS2_BRANCH='main'
 INSTALL_USER="$(logname)"
 SDFORMAT9_BRANCH='sdformat9_9.8.0'
 GAZEBO_CLASSIC_BRANCH='gazebo11'
@@ -70,18 +70,13 @@ if [[ "$(whoami)" != 'root' ]]; then
     exit 1
 fi
 
-if [[ "${-}" != *i* ]]; then
-    echo 'You must run this script in an interactive shell session' >&2
-    exit 1
-fi
-
 source /etc/os-release
 if [[ "${UBUNTU_CODENAME}" != 'jammy' ]]; then
     read -p 'WARN: This script was only designed for Ubuntu 22.04, so may not work. Press ENTER to continue...'
 fi
 
 # Install virt-what to check if we are running on a hypervisor and curl to download the required dependency list
-add-apt-repository universe
+add-apt-repository universe -y
 apt update
 apt install virt-what curl -y
 
