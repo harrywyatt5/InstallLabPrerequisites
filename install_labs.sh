@@ -138,6 +138,6 @@ mkdir ~/comp_robot_ws/
 mkdir ~/comp_robot_ws/src
 echo 'source ~/comp_robot_ws/install/setup.bash' >> ~/.bashrc
 echo 'source ~/ros_additional_libraries/install/setup.bash' >> ~/.bashrc
-sed -i 's/export _colcon_cd_root=.+$/export _colcon_cd_root=~/comp_robot_ws' ~/.bashrc
+sed -i -E 's/export _colcon_cd_root=.+$/export _colcon_cd_root=~/comp_robot_ws/' ~/.bashrc
 "
 echo 'Done! You should be able to clone the labs into ~/comp_robot_ws/src and build and run them!'
