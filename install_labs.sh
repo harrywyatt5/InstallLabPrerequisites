@@ -8,8 +8,8 @@ set -e
 # PACKAGES is a newline-separated list of packages to get from apt (optional)
 # GITHUB_SSH_KEY will use SSH rather than HTTPS to clone Git packages if set, offering that SSH key to GitHub (optional)
 INSTALL_USER="$(logname)"
-SDFORMAT9_BRANCH=''
-GAZEBO_CLASSIC_BRANCH=''
+SDFORMAT9_BRANCH='sdformat9_9.8.0'
+GAZEBO_CLASSIC_BRANCH='gazebo11'
 GAZEBO_PKGS_BRANCH='ros2'
 TURTLEBOT_SIMULATIONS_BRANCH='humble'
 ROS2_CONTROL_BRANCH='humble'
@@ -23,7 +23,7 @@ function getGPGKey {
 }
 
 function run_as_install_user {
-    su - "${INSTALL_USER}" -s '/bin/bash' -c "${1}"
+    su - "${INSTALL_USER}" -s /bin/bash -c "${1}"
 }
 
 function getPackagesList {
@@ -126,25 +126,33 @@ cd
 rm -r /tmp/gc
 
 # Set up user's bashrc
-# TODO: replace /usr/share/gazebo/setup.bash with the real location
-run_as_install_user <<EOF
-echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
-echo 'source /usr/share/colcon_cd/function/colcon_cd.sh' >> ~/.bashrc
-echo 'source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash' >> ~/.bashrc
-echo 'export _colcon_cd_root=~/ros_additional_libraries' >> ~/.bashrc
-echo 'source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash' >> ~/.bashrc
-echo 'source /usr/share/gazebo/setup.bash' >> ~/.bashrc
-EOF
+USR_SOURCE_SCRIPTS="
+source /opt/ros/humble/setup.bash
+source /usr/share/colcon_cd/function/colcon_cd.sh
+source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+export _colcon_cd_root=~/ros_additional_libraries
+source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+source /usr/local/share/gazebo/setup.bash
+"
+run_as_install_user "echo ${USR_SOURCE_SCRIPTS} >> ~/.bashrc"
 # TODO: error if already exists
-run_as_install_user <<EOF 
+run_as_install_user "
 mkdir ~/ros_additional_libraries
 mkdir ~/ros_additional_libraries/src
 cd ~/ros_additional_libraries/src
 mkdir gazebo_ros_pkgs
 mkdir turtlebot3_simulations
 mkdir gazebo_ros2_control
-EOF
+"
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${GAZEBO_PKGS_BRANCH} $(getGitHubPrefix)ros-simulation/gazebo_ros_pkgs ~/ros_additional_libraries/src/gazebo_ros_pkgs"
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${TURTLEBOT_SIMULATIONS_BRANCH} $(getGitHubPrefix)ROBOTIS-GIT/turtlebot3_simulations ~/ros_additional_libraries/src/turtlebot3_simulations"
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${ROS2_CONTROL_BRANCH} $(getGitHubPrefix)ros-controls/gazebo_ros2_control ~/ros_additional_libraries/src/gazebo_ros2_control"
-run_as_install_user "export MAKEFLAGS='-j$(getCoreCount)' && cd ~/ros_additional_libraries && colcon build --symlink-install"
+run_as_install_user "${USR_SOURCE_SCRIPTS} && export MAKEFLAGS='-j$(getCoreCount)' && cd ~/ros_additional_libraries && colcon build --symlink-install"
+run_as_install_user "
+mkdir ~/comp_robot_ws/
+mkdir ~/comp_robot_ws/src
+echo 'source ~/comp_robot_ws/install/setup.bash' >> ~/.bashrc
+echo 'source ~/ros_additional_libraries/install/setup.bash' >> ~/.bashrc
+sed -i 's/export _colcon_cd_root=.+$/export _colcon_cd_root=~/comp_robot_ws' ~/.bashrc
+"
+echo 'Finished successfully'
