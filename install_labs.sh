@@ -120,7 +120,7 @@ export _colcon_cd_root=~/ros_additional_libraries
 source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
 source /usr/local/share/gazebo/setup.bash
 "
-run_as_install_user "echo ${USR_SOURCE_SCRIPTS} >> ~/.bashrc"
+run_as_install_user "echo \"${USR_SOURCE_SCRIPTS}\" >> ~/.bashrc"
 run_as_install_user "
 mkdir ~/ros_additional_libraries
 mkdir ~/ros_additional_libraries/src
@@ -138,6 +138,6 @@ mkdir ~/comp_robot_ws/
 mkdir ~/comp_robot_ws/src
 echo 'source ~/comp_robot_ws/install/setup.bash' >> ~/.bashrc
 echo 'source ~/ros_additional_libraries/install/setup.bash' >> ~/.bashrc
-sed -i -E 's/export _colcon_cd_root=.+$/export _colcon_cd_root=~/comp_robot_ws/' ~/.bashrc
+sed -i -E 's/export _colcon_cd_root=.+$/export _colcon_cd_root=~\/comp_robot_ws/' ~/.bashrc
 "
 echo 'Done! You should be able to clone the labs into ~/comp_robot_ws/src and build and run them!'
