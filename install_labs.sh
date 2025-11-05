@@ -2,7 +2,7 @@
 set -e
 
 # -- Parameters ---
-# ROS2_GPG_KEY can be used to manually set a ros2 GPG key (optional)
+# ROS2_GPG_KEY can be used to manually set a ros2 GPG key in base64 (optional)
 # USE_CORE_COUNT is how many cores to use to operate the compilation (optional)
 # PACKAGES is a newline-separated list of packages to get from apt (optional)
 # GITHUB_SSH_KEY will use SSH rather than HTTPS to clone Git packages if set, offering that SSH key to GitHub (optional)
@@ -16,9 +16,9 @@ ROS2_CONTROL_BRANCH='humble'
 
 function getGPGKey {
     if [[ -z "${ROS2_GPG_KEY}" ]]; then
-        echo "$(curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key)"
+        curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key
     else
-        echo "${ROS2_GPG_KEY}"
+        printf '%s' "${ROS2_GPG_KEY}" | base64 -d
     fi 
 }
 
@@ -28,7 +28,7 @@ function run_as_install_user {
 
 function getPackagesList {
     if [[ -z "${PACKAGES}" ]]; then
-        echo "$(curl -sSL https://raw.githubusercontent.com/harrywyatt5/InstallLabPrerequisites/refs/heads/main/packages.txt)"
+        curl -sSL https://raw.githubusercontent.com/harrywyatt5/InstallLabPrerequisites/refs/heads/main/packages.txt
     else
         echo "${PACKAGES}"
     fi
@@ -86,7 +86,7 @@ fi
 
 # Install ros2
 getGPGKey > /usr/share/keyrings/ros-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu ${UBUNTU_CODENAME} ${USE_ROS2_BRANCH}" >> /etc/apt/sources.list.d/ros2.list
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu ${UBUNTU_CODENAME} ${USE_ROS2_BRANCH}" > /etc/apt/sources.list.d/ros2.list
 apt update
 apt install ros-humble-desktop-full -y
 
