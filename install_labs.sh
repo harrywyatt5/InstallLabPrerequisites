@@ -93,10 +93,6 @@ apt update
 getPackagesList | xargs apt install -y
 
 # Install and build sdformat9
-if [[ -d '/tmp/sdformat9' ]]; then
-    echo '/tmp/sdformat9 already exists' >&2
-    exit 1
-fi
 run_as_install_user 'mkdir /tmp/sdformat9'
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${SDFORMAT9_BRANCH} $(getGitHubPrefix)gazebosim/sdformat.git /tmp/sdformat9"
 run_as_install_user "mkdir /tmp/sdformat9/build && cd /tmp/sdformat9/build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local && make -j$(getCoreCount)"
@@ -107,10 +103,6 @@ cd
 rm -r '/tmp/sdformat9'
 
 # Install and build Gazebo Classic
-if [[ -d '/tmp/gc' ]]; then
-    echo '/tmp/gc already exists' >&2
-    exit 1
-fi
 run_as_install_user 'mkdir /tmp/gc'
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${GAZEBO_CLASSIC_BRANCH} $(getGitHubPrefix)gazebosim/gazebo-classic /tmp/gc"
 run_as_install_user "mkdir /tmp/gc/build && cd /tmp/gc/build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local && make -j$(getCoreCount)"
@@ -129,7 +121,6 @@ source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
 source /usr/local/share/gazebo/setup.bash
 "
 run_as_install_user "echo ${USR_SOURCE_SCRIPTS} >> ~/.bashrc"
-# TODO: error if already exists
 run_as_install_user "
 mkdir ~/ros_additional_libraries
 mkdir ~/ros_additional_libraries/src
@@ -141,7 +132,7 @@ mkdir gazebo_ros2_control
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${GAZEBO_PKGS_BRANCH} $(getGitHubPrefix)ros-simulation/gazebo_ros_pkgs ~/ros_additional_libraries/src/gazebo_ros_pkgs"
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${TURTLEBOT_SIMULATIONS_BRANCH} $(getGitHubPrefix)ROBOTIS-GIT/turtlebot3_simulations ~/ros_additional_libraries/src/turtlebot3_simulations"
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${ROS2_CONTROL_BRANCH} $(getGitHubPrefix)ros-controls/gazebo_ros2_control ~/ros_additional_libraries/src/gazebo_ros2_control"
-run_as_install_user "${USR_SOURCE_SCRIPTS} && export MAKEFLAGS='-j$(getCoreCount)' && cd ~/ros_additional_libraries && colcon build --symlink-install"
+run_as_install_user "${USR_SOURCE_SCRIPTS} export MAKEFLAGS='-j$(getCoreCount)' && cd ~/ros_additional_libraries && colcon build --symlink-install"
 run_as_install_user "
 mkdir ~/comp_robot_ws/
 mkdir ~/comp_robot_ws/src
@@ -149,4 +140,4 @@ echo 'source ~/comp_robot_ws/install/setup.bash' >> ~/.bashrc
 echo 'source ~/ros_additional_libraries/install/setup.bash' >> ~/.bashrc
 sed -i 's/export _colcon_cd_root=.+$/export _colcon_cd_root=~/comp_robot_ws' ~/.bashrc
 "
-echo 'Finished successfully'
+echo 'Done! You should be able to clone the labs into ~/comp_robot_ws/src and build and run them!'
