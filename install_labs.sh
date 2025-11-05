@@ -6,13 +6,13 @@ set -e
 # USE_CORE_COUNT is how many cores to use to operate the compilation (optional)
 # PACKAGES is a newline-separated list of packages to get from apt (optional)
 # GITHUB_SSH_KEY will use SSH rather than HTTPS to clone Git packages if set, offering that SSH key to GitHub (optional)
-USE_ROS2_BRANCH='main'
-INSTALL_USER="$(logname)"
-SDFORMAT9_BRANCH='sdformat9_9.8.0'
-GAZEBO_CLASSIC_BRANCH='gazebo11'
-GAZEBO_PKGS_BRANCH='ros2'
-TURTLEBOT_SIMULATIONS_BRANCH='humble'
-ROS2_CONTROL_BRANCH='humble'
+USE_ROS2_BRANCH="${USE_ROS2_BRANCH:-main}"
+INSTALL_USER="${INSTALL_USER:-$(logname)}"
+SDFORMAT9_BRANCH="${SDFORMAT9_BRANCH:-sdformat9_9.8.0}"
+GAZEBO_CLASSIC_BRANCH="${GAZEBO_CLASSIC_BRANCH:-gazebo11}"
+GAZEBO_PKGS_BRANCH="${GAZEBO_PKGS_BRANCH:-ros2}"
+TURTLEBOT_SIMULATIONS_BRANCH="${TURTLEBOT_SIMULATIONS_BRANCH:-humble}"
+ROS2_CONTROL_BRANCH="${ROS2_CONTROL_BRANCH:-humble}"
 
 function getGPGKey {
     if [[ -z "${ROS2_GPG_KEY}" ]]; then
