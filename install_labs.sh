@@ -84,11 +84,10 @@ if [[ -z "$(virt-what)" ]]; then
     read -p 'WARN: This system is not a virtual machine. It is highly recommended to run this script in a VM. Press ENTER to continue...'
 fi
 
-# Install ros2
+# Configure Ros2 repo
 getGPGKey > /usr/share/keyrings/ros-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu ${UBUNTU_CODENAME} ${USE_ROS2_BRANCH}" > /etc/apt/sources.list.d/ros2.list
 apt update
-apt install ros-humble-desktop-full -y
 
 # Install additional packages
 getPackagesList | xargs apt install -y

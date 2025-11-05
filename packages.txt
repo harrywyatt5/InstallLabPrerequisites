@@ -75,3 +75,10 @@ ros-humble-kdl-parser
 python3-matplotlib
 cmake
 build-essential
+libfreeimage-dev
+libtar-dev
+libignition-msgs5-dev
+libignition-transport8-dev
+libignition-common3-dev
+libignition-fuel-tools4-dev
+libqwt-qt5-dev
