@@ -119,7 +119,7 @@ if [[ -d '/tmp/gc' ]]; then
 fi
 run_as_install_user 'mkdir /tmp/gc'
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${GAZEBO_CLASSIC_BRANCH} $(getGitHubPrefix)gazebosim/gazebo-classic /tmp/gc"
-run_as_install_user "mkdir /tmp/sdformat9/build && cd /tmp/sdformat9/build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local && make -j$(getCoreCount)"
+run_as_install_user "mkdir /tmp/gc/build && cd /tmp/gc/build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local && make -j$(getCoreCount)"
 cd /tmp/gc/build
 make install
 cd
