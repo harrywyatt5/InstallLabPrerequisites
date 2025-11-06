@@ -122,7 +122,7 @@ export _colcon_cd_root=~/ros_additional_libraries
 source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
 source /usr/local/share/gazebo/setup.bash
 "
-run_as_install_user "echo \'export LD_LIBRARY_PATH=/usr/local/lib:\$LD_LIBRARY_PATH\' >> ~/.bashrc'"
+run_as_install_user "echo 'export LD_LIBRARY_PATH=/usr/local/lib:\$LD_LIBRARY_PATH' >> ~/.bashrc"
 run_as_install_user "echo \"${USR_SOURCE_SCRIPTS}\" >> ~/.bashrc"
 run_as_install_user "
 mkdir ~/ros_additional_libraries
