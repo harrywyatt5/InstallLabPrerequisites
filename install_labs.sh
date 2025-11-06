@@ -13,6 +13,7 @@ GAZEBO_CLASSIC_BRANCH="${GAZEBO_CLASSIC_BRANCH:-gazebo11}"
 GAZEBO_PKGS_BRANCH="${GAZEBO_PKGS_BRANCH:-ros2}"
 TURTLEBOT_SIMULATIONS_BRANCH="${TURTLEBOT_SIMULATIONS_BRANCH:-humble}"
 ROS2_CONTROL_BRANCH="${ROS2_CONTROL_BRANCH:-humble}"
+DEBIAN_FRONTEND=noninteractive
 
 function getGPGKey {
     if [[ -z "${ROS2_GPG_KEY}" ]]; then
@@ -120,6 +121,7 @@ export _colcon_cd_root=~/ros_additional_libraries
 source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
 source /usr/local/share/gazebo/setup.bash
 "
+run_as_install_user "echo 'export LD_LIBRARY_PATH=/usr/local/lib:\$LD_LIBRARY_PATH' >> ~/.bashrc'"
 run_as_install_user "echo \"${USR_SOURCE_SCRIPTS}\" >> ~/.bashrc"
 run_as_install_user "
 mkdir ~/ros_additional_libraries
@@ -140,4 +142,4 @@ echo 'source ~/comp_robot_ws/install/setup.bash' >> ~/.bashrc
 echo 'source ~/ros_additional_libraries/install/setup.bash' >> ~/.bashrc
 sed -i -E 's/export _colcon_cd_root=.+$/export _colcon_cd_root=~\/comp_robot_ws/' ~/.bashrc
 "
-echo 'Done! You should be able to clone the labs into ~/comp_robot_ws/src and build and run them!'
+echo 'Done! You should be able to clone the labs into ~/comp_robot_ws/src and build and run them! Remember to restart your terminal'
