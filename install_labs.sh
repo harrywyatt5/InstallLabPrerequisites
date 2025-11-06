@@ -13,6 +13,7 @@ GAZEBO_CLASSIC_BRANCH="${GAZEBO_CLASSIC_BRANCH:-gazebo11}"
 GAZEBO_PKGS_BRANCH="${GAZEBO_PKGS_BRANCH:-ros2}"
 TURTLEBOT_SIMULATIONS_BRANCH="${TURTLEBOT_SIMULATIONS_BRANCH:-humble}"
 ROS2_CONTROL_BRANCH="${ROS2_CONTROL_BRANCH:-humble}"
+SLAM_GMAPPING_BRANCH="${SLAM_GMAPPING_BRANCH:-Ros2_Humble_Launch}"
 DEBIAN_FRONTEND=noninteractive
 
 function getGPGKey {
@@ -130,10 +131,12 @@ cd ~/ros_additional_libraries/src
 mkdir gazebo_ros_pkgs
 mkdir turtlebot3_simulations
 mkdir gazebo_ros2_control
+mkdir slam_gmapping_Humble
 "
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${GAZEBO_PKGS_BRANCH} $(getGitHubPrefix)ros-simulation/gazebo_ros_pkgs ~/ros_additional_libraries/src/gazebo_ros_pkgs"
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${TURTLEBOT_SIMULATIONS_BRANCH} $(getGitHubPrefix)ROBOTIS-GIT/turtlebot3_simulations ~/ros_additional_libraries/src/turtlebot3_simulations"
 run_as_install_user "git clone $(getGitHubKeySwitch) -b ${ROS2_CONTROL_BRANCH} $(getGitHubPrefix)ros-controls/gazebo_ros2_control ~/ros_additional_libraries/src/gazebo_ros2_control"
+run_as_install_user "git clone $(getGitHubKeySwitch) -b ${SLAM_GMAPPING_BRANCH} $(getGitHubPrefix)GMHadou/slam_gmapping_Humble ~/ros_additional_libraries/src/slam_gmapping_Humble"
 run_as_install_user "${USR_SOURCE_SCRIPTS} export MAKEFLAGS='-j$(getCoreCount)' && cd ~/ros_additional_libraries && colcon build --symlink-install"
 run_as_install_user "
 mkdir ~/comp_robot_ws/
